@@ -139,6 +139,10 @@ def search_device():
     print('-----------------')
 
     search = input('Sisesta otsing: ')
+    #kontrolli otsingu pikkust
+    if len(search) <= 2: # 3+ otsib
+        return
+
     search = search.lower()
     found = False
 
@@ -148,6 +152,7 @@ def search_device():
                 if search in line.lower():
                     print(line.strip()) # Rida failis ilma reavahetuseta
                     found = True
+                    
         if not found:
             print('Seadet ei leitud.')
     except FileNotFoundError:
