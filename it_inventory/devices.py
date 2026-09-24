@@ -1,17 +1,13 @@
 # devices.py
+from file_manager import read_devices, add_device_to_file, write_devices
+
 def get_next_id():
     """Leiab järgmise seadme ID"""
     device_id = 1
-
-    try:
-        with open('devices.csv', 'r', encoding='utf-8') as f:
-            for line in f: 
-                data = line.strip().split(';')
-
-                if data[0].isdigit():
-                    device_id = int(data[0]) + 1
-    except FileNotFoundError:
-        pass
+    devices = read_devices()
+    for data in devices:
+        if data[0].isdigit():
+            device_id = int(data[0]) + 1
 
     return device_id
 
@@ -30,9 +26,8 @@ def add_device():
     room = input('Ruum: ')
     status = 'Töökorras'
 
-    with open('devices.csv', 'a', encoding='utf-8') as file:
-        file.write(f'{device_id};{device_type};{manufacturer};{model};{room};{status}\n')
-
+    device = [str(device_id),device_type,manufacturer,model,room,status]
+    add_device_to_file(device)
 
     print(f'Seade lisatud. ID: {device_id}')
 
@@ -44,14 +39,14 @@ def show_devices():
     print('\nSEADMETE NIMEKIRI')
     print('-------------------')
 
-    try: 
-        with open('devices.csv', 'r', encoding='utf-8') as f:
-            for line in f:
-                data = line.strip().split(';')
+    devices = read_devices()
 
-                print(f'{" | ".join(data)}')
-    except FileNotFoundError:
+    if not devices:
         print('Seadmeid pole veel lisatud.')
+        return
+
+    for device in devices:
+        print(' | '.join(device))
 
 def delete_device():
     """Kustutab valitud seade inventuurist"""
@@ -61,28 +56,22 @@ def delete_device():
 
     device_id = input('Sisesta seadme ID: ')
 
-    lines = []
+    devices = read_devices()
+    new_devices = []
     found = False
 
-    try:
-        with open('devices.csv', 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        print('Seadmeid ei ole veel lisatud')
-        return
+    for device in devices:
+        if device[0] == device_id:
+            found = True
+        else:
+            new_devices.append(device)
 
-    with open('devices.csv', 'w', encoding='utf-8') as f:
-        for line in lines:
-            data = line.strip().split(';')
-
-            if data[0] == device_id:
-                found = True
-            else:
-                f.write(line)
     if found:
-        print('Seade kustutatud')
+        write_devices(new_devices)
+        print('Seade on kustutatud')
     else:
         print('Sellise ID-ga seadet ei leitud')
+
 
 
 def edit_device():
@@ -93,41 +82,32 @@ def edit_device():
 
     found = False
     device_id = input('Sisesta seadme ID: ')
+    devices = read_devices()
 
-    try:
-        with open('devices.csv', 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        print('Seadmeid ei ole veel lisatud')
-        return
+    for data in devices:
+        if data[0] == device_id:
+            found = True
 
-    with open('devices.csv', 'w', encoding='utf-8') as f:
-        for line in lines:
-            data = line.strip().split(';')
-            if data[0] == device_id:
-                found = True
+            device_type = input(f'Seadme tüüp [{data[1]}]: ')
+            manufacturer = input(f'Tootja [{data[2]}]: ')
+            model = input(f'Mudel [{data[3]}]: ')
+            room = input(f'Ruum [{data[4]}]: ')
+            status = input(f'Staatus [{data[5]}]: ')
 
-                device_type = input(f'Seadme tüüp [{data[1]}]: ')
-                manufacturer = input(f'Tootja [{data[2]}]: ')
-                model = input(f'Mudel [{data[3]}]: ')
-                room = input(f'Ruum [{data[4]}]: ')
-                status = input(f'Staatus [{data[5]}]: ')
+            if device_type != '':
+                data[1] = device_type
+            if manufacturer != '':
+                data[2] = manufacturer
+            if model != '':
+                data[3] = model
+            if room != '':
+                data[4] = room
+            if status != '':
+                data[5] = status
 
-                if device_type == '':
-                    device_type = data[1]
-                if manufacturer == '':
-                    manufacturer = data[2]
-                if model == '':
-                    model = data[3]
-                if room == '':
-                    room = data[4]
-                if status == '':
-                    status = data[5]
-
-                f.write(f'{device_id};{device_type};{manufacturer};{model};{room};{status}\n')
-            else:
-                f.write(line)
+                
     if found:
+        write_devices(devices)
         print('Seadme andmed muudetud.')
     else:
         print('Sellise ID-ga seadet ei leitud.')
