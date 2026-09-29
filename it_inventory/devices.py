@@ -125,16 +125,38 @@ def search_device():
 
     search = search.lower()
     found = False
+    devices = read_devices()
 
-    try:
-        with open('devices.csv', 'r', encoding='utf-8') as f:
-            for line in f:
-                if search in line.lower():
-                    print(line.strip()) # Rida failis ilma reavahetuseta
-                    found = True
-                    
-        if not found:
-            print('Seadet ei leitud.')
-    except FileNotFoundError:
-        print('Seadmeid pole veel lisatud')
-                    
+    for device in devices:
+        line = ';'.join(device) # Nagu faili rida
+        if search in line.lower():
+            print(line.strip()) # Rida failis ilma reavahetuseta
+            found = True
+
+    if not found:
+        print('Seadet ei leitud.')
+
+
+def show_statistics():
+    """Kuvab inventuuris olevate seadmete statistikat"""
+
+    print('\nSTATISTIKA')
+    print('------------')
+
+    total = 0 # Kokku
+    working = 0 # Töökorras
+    broken = 0 # Katki
+
+    devices = read_devices()
+
+    for device in devices:
+        total += 1
+
+        if device[5].lower() == 'töökorras':
+            working += 1
+        elif device[5].lower() == 'katki':
+            broken += 1
+
+    print(f'Seadmeid kokku  {total}')
+    print(f'Töökorras       {working}')
+    print(f'Katkised        {broken}')
