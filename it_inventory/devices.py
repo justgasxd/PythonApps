@@ -1,8 +1,11 @@
 # devices.py
-from file_manager import read_devices, add_device_to_file, write_devices
+from file_manager import (
+    read_devices, add_device_to_file, write_devices
+    )
 
 def get_next_id():
-    """Leiab järgmise seadme ID"""
+    """Leiab järgmise seadme ID."""
+
     device_id = 1
     devices = read_devices()
     for data in devices:
@@ -13,31 +16,43 @@ def get_next_id():
 
 
 def add_device():
-    """Lisab uue seadme inventuuri"""
+    """Lisab uue seadme inventuuri."""
 
     device_id = get_next_id()
 
-    print('\nUUE SEADME LISAMINE')
-    print('---------------------')
+    print("\nUUE SEADME LISAMINE")
+    print("---------------------")
 
-    device_type = input('Seadme tüüp: ')
-    manufacturer = input('Tootja: ')
-    model = input('Mudel: ')
-    room = input('Ruum: ')
-    status = 'Töökorras'
+    device_type = input("Seadme tüüp: ")
 
-    device = [str(device_id),device_type,manufacturer,model,room,status]
+    if device_type == '':
+        print("Seadme tüüp peab olema sisestatud.")
+        return
+    
+    manufacturer = input("Tootja: ")
+    model = input("Mudel: ")
+    room = input("Ruum: ")
+    status = "Töökorras"
+
+    device = [
+        str(device_id),
+        device_type,
+        manufacturer,
+        model,
+        room,
+        status
+    ]
+
     add_device_to_file(device)
 
-    print(f'Seade lisatud. ID: {device_id}')
-
+    print(f"Seade lisatud. ID: {device_id}")
 
 
 def show_devices():
+    """Kuvab kõik inventuuris olevad seadmed."""
 
-    """Kuvab kõik inventuuris olevad seadmed"""
-    print('\nSEADMETE NIMEKIRI')
-    print('-------------------')
+    print("\nSEADMETE NIMEKIRI")
+    print("-------------------")
 
     devices = read_devices()
 
@@ -45,18 +60,28 @@ def show_devices():
         print('Seadmeid pole veel lisatud.')
         return
 
+    number = 1
+
     for device in devices:
-        print(' | '.join(device))
+        print(f'{number}. {" | ".join(device)}')
+        number = number + 1
+
+
 
 def delete_device():
-    """Kustutab valitud seade inventuurist"""
+    """Kustutab valitud seadme inventuurist"""
 
-    print('\nSEADME KUSTUTAMINE')
-    print('-------------------')
-
-    device_id = input('Sisesta seadme ID: ')
+    print("\nSEADME KUSTUTAMINE")
+    print("--------------------")
 
     devices = read_devices()
+
+    if not devices:
+        print("Seadmeid pole veel lisatud.")
+        return
+
+    device_id = input("Sisesta seadme ID: ")
+
     new_devices = []
     found = False
 
@@ -68,84 +93,111 @@ def delete_device():
 
     if found:
         write_devices(new_devices)
-        print('Seade on kustutatud')
+        print("Seade on kustutatud")
     else:
-        print('Sellise ID-ga seadet ei leitud')
-
-
+        print("Sellise ID-ga seadet ei leitud.")
 
 def edit_device():
     """Muudab valitud seadme andmeid."""
 
-    print('\nSEADME ANDMETE MUUTMINE')
-    print('-------------------------')
+    print("\nSEADME ANDMETE MUUTMINE")
+    print("-------------------------")
 
-    found = False
-    device_id = input('Sisesta seadme ID: ')
     devices = read_devices()
 
-    for data in devices:
+    if not devices:
+        print("Seadmeid pole veel lisatud.")
+        return
+
+    found = False
+    device_id = input("Sisesta seadme ID: ")
+    devices = read_devices()
+
+    for data in devices:        
         if data[0] == device_id:
             found = True
 
-            device_type = input(f'Seadme tüüp [{data[1]}]: ')
-            manufacturer = input(f'Tootja [{data[2]}]: ')
-            model = input(f'Mudel [{data[3]}]: ')
-            room = input(f'Ruum [{data[4]}]: ')
-            status = input(f'Staatus [{data[5]}]: ')
+            device_type = input(f"Seadme tüüp [{data[1]}]: ")
+            manufacturer = input(f"Tootja [{data[2]}]: ")
+            model = input(f"Mudel [{data[3]}]: ")
+            room = input(f"Ruum [{data[4]}]: ")
 
-            if device_type != '':
+            if device_type != "":
                 data[1] = device_type
-            if manufacturer != '':
+            if manufacturer != "":
                 data[2] = manufacturer
-            if model != '':
+            if model != "":
                 data[3] = model
-            if room != '':
+            if room != "":
                 data[4] = room
-            if status != '':
-                data[5] = status
-
                 
+            print('Vali uus staatus: ')
+            print('1. Töökorras ')
+            print('2. Katki')
+
+            new_status = input('Sisesta uus staatus: ')
+
+            if new_status == '1':
+                data[5] = 'Töökorras'
+            elif new_status == '2':
+                data[5] = 'Katki'
+
     if found:
         write_devices(devices)
-        print('Seadme andmed muudetud.')
+        print("Seadme andmed muudetud.")
     else:
-        print('Sellise ID-ga seadet ei leitud.')
+        print("Sellise ID-ga seadet ei leitud.")
+
 
 def search_device():
-    """Otsib invetnuuris seadmeid kasutaja sisestatud otsingu järgi"""
+    """Otsib inventuurist seadmeid kasutaja sisestatud otsingu järgi"""
 
-    print('\nSEADME OTSIMINE')
-    print('-----------------')
+    print("\nSEADME OTSIMINE")
+    print("-----------------")
+
+    devices = read_devices()
+
+    if not devices:
+        print('Seadmeid pole veel lisatud.')
+        return
 
     search = input('Sisesta otsing: ')
-    #kontrolli otsingu pikkust
-    if len(search) <= 2: # 3+ otsib
+
+    if len(search) <= 2:
+        print('Otsingu fraas on lühike.')
         return
 
     search = search.lower()
     found = False
-    devices = read_devices()
+    count = 0
 
-    for device in devices:
-        line = ';'.join(device) # Nagu faili rida
-        if search in line.lower():
-            print(line.strip()) # Rida failis ilma reavahetuseta
-            found = True
+    with open('devices.csv', 'r', encoding='utf-8') as f:
+        for line in f:
+            if search in line.lower():
+                print(line.strip())
+                found = True
+                count += 1
 
-    if not found:
+    if found:
+        print(f'Leitud seadmeid: {count}')
+    else:
         print('Seadet ei leitud.')
 
-
 def show_statistics():
-    """Kuvab inventuuris olevate seadmete statistikat"""
+    """Kuvab inventuuris olevate seadmete statistikat."""
 
     print('\nSTATISTIKA')
     print('------------')
 
+    devices = read_devices()
+
+    if not devices:
+        print("Seadmeid pole veel lisatud.")
+        return
+
     total = 0 # Kokku
     working = 0 # Töökorras
-    broken = 0 # Katki
+    broken = 0 # Katkti
 
     devices = read_devices()
 
@@ -157,6 +209,124 @@ def show_statistics():
         elif device[5].lower() == 'katki':
             broken += 1
 
+    working_protsent = working / total * 100
+    broken_protsent = broken / total * 100
+
     print(f'Seadmeid kokku  {total}')
-    print(f'Töökorras       {working}')
+    print(f'Tööorras        {working}')
     print(f'Katkised        {broken}')
+
+    print('\n')
+
+    print(f'Töökorras: {working_protsent}%')
+    print(f'Katki: {broken_protsent}%')
+
+def search_by_manufacturer():
+    """Otsib inventuurist seadmeid tootja järgi."""
+
+    print('\nSEADME OTSIMINE TOOTJA JÄRGI')
+    print('-----------------------------')
+
+    devices = read_devices()
+
+    if not devices:
+        print('Seadmeid pole veel lisatud.')
+        return
+
+    manufacturer = input('Sisesta tootja: ')
+
+    if manufacturer == '':
+        print('Tootja peab olema sisestatud.')
+        return
+
+    found = False
+
+    for device in devices:
+        if device[2].lower() == manufacturer.lower():
+            print(" | ".join(device))
+            found = True
+
+    if not found:
+        print('Selle tootja seadmeid ei leitud.')
+
+def show_devices_by_room():
+    """Kuvab inventuuris olevad seadmed ruumide kaupa."""
+
+    print('\nSEADMETE NIMEKIRI RUUMIDE KAUPA')
+    print('-------------------------------')
+
+    devices = read_devices()
+
+    if not devices:
+        print('Seadmeid pole veel lisatud.')
+        return
+
+    room = input('Sisesta ruum: ')
+    found = False
+
+    for device in devices:
+        if device[4].lower() == room.lower():
+            print(' | '.join(device))
+            found = True
+
+    if not found:
+        print('Selles ruumis seadmeid ei ole.')
+
+
+def most_common_manufacturers():
+    devices = read_devices()
+
+    if not devices:
+        print('Seadmeid pole veel lisatud.')
+        return
+
+    manufacturers = {}
+
+    for device in devices:
+        manufacturer = device[1]
+
+        if manufacturer in manufacturers:
+            manufacturers[manufacturer] += 1
+        else:
+            manufacturers[manufacturer] = 1
+
+    most_common = max(manufacturers, key=manufacturers.get)
+    count = manufacturers[most_common]
+
+    print('Kõige rohkem seadmeid:')
+    print(f'{most_common} - {count} seadet')
+
+
+def change_status():
+    devices = read_devices()
+    
+    if not devices:
+        print('Seadmeid pole veel lisatud')
+        return
+
+    device_id = input("Sisesta seadme ID: ")
+
+    for device in devices:
+        if str(device[0]) == device_id:
+            print(f"Seade: {device[1]}")
+            print(f"Praegune staatus: {device[5]}")
+
+            print("Vali uus staatus:")
+            print("1. Töökorras")
+            print("2. Katki")
+
+            choice = input("Valik: ")
+
+            if choice == "1":
+                device[5] = "Töökorras"
+            elif choice == "2":
+                device[5] = "Katki"
+            else:
+                print("Vale valik.")
+                return
+
+            write_devices(devices)
+            print("Staatus muudetud.")
+            return
+
+    print("Sellise ID-ga seadet ei leitud.")
