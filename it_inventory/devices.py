@@ -60,6 +60,20 @@ def show_devices():
         print('Seadmeid pole veel lisatud.')
         return
 
+    print("\nSorteeri seadmed:")
+    print("1. Tootja järgi")
+    print("2. Ruumi järgi")
+
+    choice = input("Tee valik: ")
+
+    if choice == "1":
+        devices = sorted(devices, key=lambda device: device[2])
+    elif choice == "2":
+        devices = sorted(devices, key=lambda device: device[4])
+    else:
+        print("Vigane valik.")
+        return
+
     number = 1
 
     for device in devices:
@@ -83,17 +97,25 @@ def delete_device():
     device_id = input("Sisesta seadme ID: ")
 
     new_devices = []
-    found = False
+    found_device = None
 
     for device in devices:
         if device[0] == device_id:
-            found = True
+            found_device = device
         else:
             new_devices.append(device)
 
-    if found:
-        write_devices(new_devices)
-        print("Seade on kustutatud")
+    if found_device:
+        print("Leitud seade:")
+        print(" | ".join(found_device))
+
+        confirmation = input("Kas soovid seadme kustutada? (j/e): ")
+
+        if confirmation == "j":
+            write_devices(new_devices)
+            print("Seade on kustutatud")
+        elif confirmation == "e":
+            print("Seadet ei kustutatud.")
     else:
         print("Sellise ID-ga seadet ei leitud.")
 
@@ -183,6 +205,29 @@ def search_device():
     else:
         print('Seadet ei leitud.')
 
+def search_menu():
+    """Otsinug alammenüü"""
+    
+    while True:
+        print('\nOTSING')
+        print('--------')
+        print('1.   Üldotsing')
+        print('2.   Otsi tootja järgi')
+        print('3.   Otsi ruumi järgi')
+        print('0.   Mine tagasi')
+        choice = input('Tee valik: ')
+        if choice == '1':
+            search_device()
+        elif choice == '2':
+            search_by_manufacturer()
+        elif choice == '3':
+            show_devices_by_room()
+        elif choice == '0':
+            return
+        else:
+            print('Vigane valik.')
+
+        
 def show_statistics():
     """Kuvab inventuuris olevate seadmete statistikat."""
 
@@ -330,3 +375,5 @@ def change_status():
             return
 
     print("Sellise ID-ga seadet ei leitud.")
+
+    
