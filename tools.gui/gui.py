@@ -30,6 +30,7 @@ def create_menu():
     tools_menu.add_command(label='Hinnete keskmine', command=show_grades)
     tools_menu.add_command(label='Tööaja arvutamine', command=show_work_time)
     tools_menu.add_command(label='Temperatuuri teisendamine', command=show_temperature)
+    tools_menu.add_command(label='Ristküliku arvutamine', command=calculate_rectangle)
 
     program_menu = tk.Menu(menu, tearoff=False)
     menu.add_cascade(label='Programm', menu=program_menu)
@@ -159,3 +160,28 @@ def show_temperature():
 
     tk.Button(content, text='Teisenda', width=15, command=convert).grid(row=6, column=0, columnspan=2,pady=10)
 
+def calculate_rectangle():
+    clear_home()
+    tk.Label(content, text='RISTKÜLIKU ARVUTAMINE', font=('Arial', 15, 'bold')).grid(row=0, columnspan=2, pady=(0, 20))
+    tk.Label(content, text='Külg 1: ').grid(row=1,column=0,sticky='e',padx=5,pady=5)
+    tk.Label(content, text='Külg 2: ').grid(row=2, column=0,sticky='e',padx=5,pady=5)
+    entry = tk.Entry(content, width=12)
+    entry.grid(row=1, column=1, sticky='w', pady=5,)
+    entry.focus_set()
+    entry2 = tk.Entry(content, width=12)
+    entry2.grid(row=2, column=1, sticky='w', pady=5,)
+    result = tk.Label(content, text='Ümbermööt: \nPindala: ', font=('Arial', 11, 'bold'))
+    result.grid(row=5, column=0,columnspan=2, pady=15)
+
+    def calculate():
+        try:
+            pikkus = float(entry.get())
+            laius = float(entry2.get())
+
+            perimeter = 2 * (pikkus + laius)
+            area = pikkus * laius
+            result.config(text=f'Ümbermõõt: {perimeter}\nPindala: {area}')
+
+        except ValueError:
+            messagebox.showwarning('Vigane sisend', 'Sisesta külg numbrina.')
+    tk.Button(content, text='Arvuta', width=15, command=calculate).grid(row=6, column=0, columnspan=2,pady=10)
