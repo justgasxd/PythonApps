@@ -1,12 +1,18 @@
+
 # game.py
 import random
 
+
 class GuessGame:
     def __init__(self):
+        self.max_number = 100
         self.new_game()
 
-    def new_game(self):
-        self.secret_number = random.randint(1, 100)
+    def new_game(self, max_number=None):
+        if max_number is not None:
+            self.max_number = max_number
+
+        self.secret_number = random.randint(1, self.max_number)
         self.attempts = 0
         self.finished = False
         self.cheated = False

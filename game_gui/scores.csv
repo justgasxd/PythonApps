@@ -1,2 +1,15 @@
-Gas;8;<class 'datetime.datetime'>
-gas;8;2026-10-13 13:14:25
+Nimi;Katsed;Kuupäev;Raskusaste
+gas;5;23-10-2026 11:08:45;Tavaline
+gas;6;<class 'datetime.datetime'>;Tavaline
+gas;6;23-10-2026 09:47:24;Tavaline
+gas;6;23-10-2026 11:29:54;Tavaline
+gas;7;23-10-2026 09:51:58;Tavaline
+gasss;7;23-10-2026 11:32:09;Tavaline
+gas;7;23-10-2026 11:32:40;Lihtne
+Gas;8;<class 'datetime.datetime'>;Tavaline
+gas;8;<class 'datetime.datetime'>;Tavaline
+gas;8;23-10-2026 10:02:40;Tavaline
+gas;9;23-10-2026 10:00:28;Tavaline
+gas;9;23-10-2026 11:11:23;Tavaline
+gas;10;23-10-2026 11:35:29;Tavaline
+gas;12;23-10-2026 11:33:21;Raske
